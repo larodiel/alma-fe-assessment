@@ -1,3 +1,5 @@
+import { SessionProvider } from "@/components/auth/session-provider";
+import { ReduxProvider } from "@/components/providers/redux-provider";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
@@ -22,7 +24,9 @@ export default function RootLayout({
       <body
         className={`${robotoSans.variable} antialiased`}
       >
-        {children}
+        <SessionProvider>
+          <ReduxProvider>{children}</ReduxProvider>
+        </SessionProvider>
       </body>
     </html>
   );

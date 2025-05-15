@@ -1,4 +1,4 @@
-import { LeadForm } from '@/components/forms/lead/lead-form';
+import { LeadForm } from '@/components/forms/lead/LeadForm';
 import logo from '@/public/alma-logo.svg';
 import headerImage from '@/public/header-image.jpg';
 import Image from 'next/image';

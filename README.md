@@ -9,6 +9,10 @@ Before starting the project, ensure you have the following installed:
 - [Node.js](https://nodejs.org/) (version 20 or higher)
 - [npm](https://www.npmjs.com/)
 
+## Env
+
+- [Staging](https://alma-fe-assessment.vercel.app/)
+
 ## Getting Started
 
 1. Clone the repository:
@@ -24,7 +28,12 @@ Before starting the project, ensure you have the following installed:
    npm install
    ```
 
-3. Start the development server:
+3. Create a `.env` file at root and set the following variables:
+
+   1. `NEXTAUTH_SECRET=970cd86203bdf4bdf6d764eb7f1edae2`
+   2. `NEXTAUTH_URL="http://localhost:3000"`
+
+4. Start the development server:
 
    ```bash
    npm run dev
@@ -57,6 +66,14 @@ To lint the code:
 ```bash
 npm run lint
 ```
+
+## Demo Credentials
+
+**Login route:** `/login`
+**User:** `user@example.com`
+**Pass:** `o{%LO(.~JXnWG543_A-8`
+
+**Assessment route:** `/assessment`
 
 ## Deployment
 

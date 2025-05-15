@@ -7,13 +7,16 @@ import { ControlledInput } from '@/components/ui/ControlledInput';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useLeads } from '@/hooks/use-leads';
 import { cn } from '@/lib/utils';
 import diceIcon from '@/public/dice-icon.png';
 import infoIcon from '@/public/file-icon.png';
 import heartIcon from '@/public/heart-icon.png';
 import { zodResolver } from '@hookform/resolvers/zod';
+import axios from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -56,6 +59,9 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 export function LeadForm() {
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const {addLead} = useLeads();
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -77,14 +83,22 @@ export function LeadForm() {
   } = form;
 
   const onSubmit = async (data: FormData) => {
-    await fetch('/api/lead', {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    reset();
+    try {
+      setSubmitError(null);
+      const { data: result } = await axios.post('/api/lead', data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      // Add the new lead using our custom hook
+      addLead(result.data);
+
+      reset();
+    } catch (error) {
+      console.error('Error submitting lead:', error);
+      setSubmitError('Failed to submit your information. Please try again.');
+    }
   };
 
   return (
@@ -95,14 +109,17 @@ export function LeadForm() {
             <Image src={infoIcon} alt="File Icon" width={40} className="mb-5 mx-auto" role="presentation" />
             Thank You
           </h2>
-          <p className="text-center font-bold text-lg text-foreground">
-            Your information was submitted to our team of immigration attorneys. Expect an email from hello@tryalma.ai
-            <Button asChild>
-              <Link href="/" className="w-full mt-10 max-w-sm mx-auto" replace>
+          <div className="text-center font-bold text-lg text-foreground">
+            Your information was submitted to our team of immigration attorneys. Expect an email from{' '}
+            <a href="mailto:hello@tryalma.ai" target="_blank">
+              hello@tryalma.ai
+            </a>
+            <Button asChild className="block mt-10 mx-auto max-w-sm">
+              <Link href="/" replace>
                 Go Back to Homepage
               </Link>
             </Button>
-          </p>
+          </div>
         </div>
       ) : (
         <Form {...form}>
@@ -114,6 +131,11 @@ export function LeadForm() {
               preliminary assessment of your case based on your goals.
             </p>
           </div>
+          {submitError && (
+            <div className="mb-4 p-3 text-sm bg-red-50 border border-red-200 text-red-600 rounded-md">
+              {submitError}
+            </div>
+          )}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-10 max-w-sm mx-auto" noValidate>
             <div className="space-y-4">
               <ControlledInput
